@@ -61,7 +61,9 @@ int mpls_output(struct net *net, struct sock *sk, struct sk_buff *skb)
 		ttl = ipv6_hdr(skb)->hop_limit;
 		rt6 = (struct rt6_info *)dst;
 	} else {
-		goto drop;
+		// workaround - assume IPv4 as non-forwarded packets don't have skb->protocol set
+		ttl = ip_hdr(skb)->ttl;
+		rt = (struct rtable *)dst;
 	}
 
 	skb_orphan(skb);
